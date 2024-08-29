@@ -18,7 +18,7 @@ const Home = () => {
       <ul>
         {threads.map(thread => (
           <li key={thread.id}>
-            <Link href={`/thread/${thread.id}`}>
+            <Link href={`/${thread.id}`}>
               {thread.title} - {thread.category}
             </Link>
           </li>
