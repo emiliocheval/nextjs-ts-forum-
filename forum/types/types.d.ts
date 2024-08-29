@@ -12,6 +12,7 @@ type Thread = {
 	creationDate: string;
 	description: string;
 	creator: User;
+	commentCount: number;
 }
 
 type QNAThread =  Thread & { //Type extension
@@ -25,4 +26,5 @@ type ThreadComment = {
 	thread: number;
 	content: string;
 	creator: User
+	creationDate: string;
 }

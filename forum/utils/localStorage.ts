@@ -4,7 +4,16 @@ const COMMENTS_KEY = 'forum_comments';
 export const getThreadsFromLocalStorage = (): Thread[] => {
   if (typeof window !== 'undefined') {
     const threads = localStorage.getItem(THREADS_KEY);
-    return threads ? JSON.parse(threads) : [];
+    const parsedThreads: Thread[] = threads ? JSON.parse(threads) : [];
+
+    // Calculate comment counts for each thread
+    const comments = localStorage.getItem(COMMENTS_KEY);
+    const allComments: ThreadComment[] = comments ? JSON.parse(comments) : [];
+
+    return parsedThreads.map(thread => {
+      const commentCount = allComments.filter(comment => comment.thread === thread.id).length;
+      return { ...thread, commentCount }; // Add commentCount to each thread
+    });
   }
   return [];
 };
