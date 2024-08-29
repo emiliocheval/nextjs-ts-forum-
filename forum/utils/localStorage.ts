@@ -15,16 +15,16 @@ export const saveThreadsToLocalStorage = (threads: Thread[]): void => {
   }
 };
 
-export const getCommentsFromLocalStorage = (threadId: number): Comment[] => {
+export const getCommentsFromLocalStorage = (threadId: number): ThreadComment[] => {
   if (typeof window !== 'undefined') {
     const comments = localStorage.getItem(COMMENTS_KEY);
     const allComments = comments ? JSON.parse(comments) : [];
-    return allComments.filter((comment: Comment) => comment.thread === threadId);
+    return allComments.filter((comment: ThreadComment) => comment.thread === threadId);
   }
   return [];
 };
 
-export const saveCommentToLocalStorage = (comment: Comment): void => {
+export const saveCommentToLocalStorage = (comment: ThreadComment): void => {
   if (typeof window !== 'undefined') {
     const comments = localStorage.getItem(COMMENTS_KEY);
     const allComments = comments ? JSON.parse(comments) : [];

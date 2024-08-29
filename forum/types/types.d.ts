@@ -20,7 +20,7 @@ type QNAThread =  Thread & { //Type extension
 	commentAnswerId?: number;
 }
 
-interface Comment {
+type ThreadComment = {
 	id: number;
 	thread: number;
 	content: string;
