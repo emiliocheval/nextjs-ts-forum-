@@ -20,7 +20,8 @@ const CreateThread = () => {
       category,
       creationDate: new Date().toISOString(),
       description,
-      creator: { userName: 'guest', password: 'password' }, 
+      creator: { userName: 'guest', password: 'password' },
+      commentCount: 0
     };
 
     threads.push(newThread);
@@ -34,7 +35,7 @@ const CreateThread = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-200 via-white to-gray-200">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-extrabold text-center mb-8 text-gray-800">Create New Thread</h1>
 
@@ -45,7 +46,7 @@ const CreateThread = () => {
           <input
             id="title"
             type="text"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
             placeholder="Enter the title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -58,7 +59,7 @@ const CreateThread = () => {
           </label>
           <select
             id="category"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
             value={category}
             onChange={(e) => setCategory(e.target.value as ThreadCategory)}
           >
@@ -73,7 +74,7 @@ const CreateThread = () => {
           </label>
           <textarea
             id="description"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
             placeholder="Enter the description"
             rows={5}
             value={description}
