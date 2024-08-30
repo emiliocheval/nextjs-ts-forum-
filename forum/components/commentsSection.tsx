@@ -26,7 +26,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ threadId, initialComm
       thread: threadId,
       content: commentContent,
       creator: { userName: "guest", password: "password" }, // Placeholder user
-      creationDate: new Date().toISOString(), // Assuming creationDate needs to be set
+      creationDate: new Date().toISOString(), 
     };
   
     setComments([...comments, newComment]);

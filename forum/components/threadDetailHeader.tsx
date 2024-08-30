@@ -3,7 +3,7 @@ import { FaRegCommentAlt } from "react-icons/fa";
 
 type ThreadDetailHeaderProps = {
   thread: Thread;
-  onCommentIconClick: () => void; // Add this prop
+  onCommentIconClick: () => void; 
 };
 
 const ThreadDetailHeader: React.FC<ThreadDetailHeaderProps> = ({ thread, onCommentIconClick }) => {
@@ -21,7 +21,7 @@ const ThreadDetailHeader: React.FC<ThreadDetailHeaderProps> = ({ thread, onComme
       <p className="text-sm text-gray-700">{thread.description}</p>
       <div className="flex items-center text-xs text-gray-500 mt-2">
         <div className="flex items-center justify-center bg-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-400 transition-colors cursor-pointer"
-             onClick={onCommentIconClick} // Attach the click handler here
+             onClick={onCommentIconClick} 
         >
           <FaRegCommentAlt className="text-lg mr-1.5 text-gray-700" />
           <span className="text-sm font-semibold text-gray-700">{thread.commentCount}</span>

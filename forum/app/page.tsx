@@ -23,9 +23,11 @@ const Home = () => {
         Create a New Thread
       </Link>
       <ul className="space-y-4">
-        {threads.map(thread => (
-          <ThreadCard key={thread.id} thread={thread} />
-        ))}
+      {threads
+  .sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime())
+  .map(thread => (
+    <ThreadCard key={thread.id} thread={thread} />
+))}
       </ul>
     </div>
   );
