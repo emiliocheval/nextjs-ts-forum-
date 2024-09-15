@@ -6,6 +6,7 @@ import {
   saveThreadsToLocalStorage,
 } from "@/utils/localStorage";
 
+
 const CreateThread = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<ThreadCategory>("THREAD");
@@ -27,8 +28,13 @@ const CreateThread = () => {
       category,
       creationDate: new Date().toISOString(),
       description,
-      creator: { userName: "guest", password: "password" },
+      creator: { userName: "guest", password: "password", isModerator: false }, // Ensure this matches the User type
       commentCount: 0,
+      isLocked: false, // Default value
+      tags: [], // Default value
+      isModerator: false // Default value
+      ,
+      comments: []
     };
 
     threads.push(newThread);
