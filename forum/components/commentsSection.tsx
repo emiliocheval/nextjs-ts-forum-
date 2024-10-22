@@ -1,61 +1,69 @@
-import React from "react";
-import { useState } from "react";
-import CommentCard from "./commentCard";
+"use client";
 
+import React, { useState, useEffect } from "react";
+import CommentCard from "@/components/commentCard"; // Adjust import if necessary
 
 type CommentsSectionProps = {
   threadId: number;
   initialComments: ThreadComment[];
-  onAddComment: (comment: ThreadComment) => void;
+  onAddComment: (content: string) => void;
+  isLocked: boolean;
+  onMarkAsAnswer: (commentId: number, markAsAnswer: boolean) => void;
+  thread: Thread;
+  currentUser: User | null;
 };
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({ threadId, initialComments, onAddComment }) => {
+const CommentsSection: React.FC<CommentsSectionProps> = ({
+  threadId,
+  initialComments,
+  onAddComment,
+  isLocked,
+  onMarkAsAnswer,
+  thread,
+  currentUser
+}) => {
   const [comments, setComments] = useState<ThreadComment[]>(initialComments);
-  const [commentContent, setCommentContent] = useState("");
-  const [error, setError] = useState<string | null>(null); 
+  const [newComment, setNewComment] = useState<string>("");
+
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
 
   const handleAddComment = () => {
-    // Validate the comment content
-    if (commentContent.trim() === "") { // Checks if the content is blank or just whitespace
-      setError("Comment cannot be empty");
-      return;
+    if (newComment.trim() !== "" && !isLocked) {
+      onAddComment(newComment.trim());
+      setNewComment(""); // Clear the text area after submission
     }
-
-    const newComment: ThreadComment = {
-      id: Date.now(),
-      thread: threadId,
-      content: commentContent,
-      creator: { userName: "guest", password: "password" }, // Placeholder user
-      creationDate: new Date().toISOString(), 
-    };
-  
-    setComments([...comments, newComment]);
-    setCommentContent("");
-    onAddComment(newComment);
-    setError(null); // Clear the error once a valid comment is submitted
   };
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mt-6 mb-4">Comments</h2>
-      <ul>
-        {comments.map(comment => (
-          <CommentCard key={comment.id} comment={comment} /> 
-        ))}
-      </ul>
-      <textarea
-        placeholder="Add a comment"
-        value={commentContent}
-        onChange={(e) => setCommentContent(e.target.value)}
-        className="w-full border rounded p-2 mt-4 text-black"
-      />
-       {error && <p className="text-red-500">{error}</p>} {/* Display error if it exists */}
-      <button
-        onClick={handleAddComment}
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Add Comment
-      </button>
+      <h2 className="text-lg font-semibold mb-4">Comments</h2>
+      {comments.map((comment) => (
+        <CommentCard
+          key={comment.id}
+          comment={comment}
+          thread={thread}
+          currentUser={currentUser}
+          onMarkAsAnswer={onMarkAsAnswer}
+        />
+      ))}
+      <div className="mt-4 text-black">
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Add a comment..."
+          disabled={isLocked}
+          className="border p-2 w-full rounded"
+        />
+        <button
+          onClick={handleAddComment}
+          disabled={isLocked}
+          className="bg-blue-500 text-white p-2 rounded mt-2"
+        >
+          Add Comment
+        </button>
+      </div>
     </div>
   );
 };

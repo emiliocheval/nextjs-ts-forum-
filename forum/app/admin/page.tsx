@@ -1,14 +1,24 @@
-// pages/admin-init.tsx
-import React from 'react';
-import AdminInitializer from '@/components/moderator/adminInitializer';
+// pages/admin.tsx
+"use client";
 
-const AdminInitPage: React.FC = () => {
+import React from 'react';
+import { getCurrentUser } from '@/utils/localStorage'; // Adjust the import path as necessary
+import AdminPanel from '@/components/moderator/adminPanel';
+
+const AdminPage: React.FC = () => {
+  const currentUser = getCurrentUser();
+
+  // Check if the user is an admin
+  if (!currentUser || !currentUser.isModerator) {
+    return <p>Access denied. You do not have permission to view this page.</p>;
+  }
+
   return (
     <div>
-      <h1>Admin Initialization</h1>
-      <AdminInitializer />
+      
+      <AdminPanel />
     </div>
   );
 };
 
-export default AdminInitPage;
+export default AdminPage;
