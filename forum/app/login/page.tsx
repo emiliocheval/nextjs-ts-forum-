@@ -6,15 +6,15 @@ import { loginUser } from '../../utils/localStorage'; // Adjust the import path 
 const Login = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
   const handleLogin = () => {
     const success = loginUser(userName, password);
 
     if (success) {
-      alert('Login successful');
       window.location.href = '/'; // Redirect to home page after login
     } else {
-      alert('Invalid credentials');
+      setErrorMessage('Invalid credentials'); // Set error message
     }
   };
 
@@ -57,12 +57,15 @@ const Login = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="inline-block mb-4 text-black bg-white py-2 px-4 rounded-lg hover:bg-[#c2c2c2] transition-colors"
             >
               Login
             </button>
           </div>
         </form>
+        {errorMessage && (
+          <p className="text-red-500 text-center mt-2">{errorMessage}</p> // Display error message
+        )}
         <p className="text-center mt-4 text-black">
           Don't have an account? <a href="/register" className="text-blue-500 underline">Register here</a>
         </p>

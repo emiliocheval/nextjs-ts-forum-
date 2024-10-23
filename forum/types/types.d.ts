@@ -1,52 +1,18 @@
 // Updated types.ts
 
-type ThreadCategory = "THREAD" | "QNA" | "AD";
+type ThreadCategory = "THREAD" | "QNA" | "AD"; // Updated to include "AD"
 
 type User = {
   userName: string;
   password: string;
-  isModerator: boolean; // Updated to include moderator status
+  isModerator: boolean; // Moderator status
+  profilePic?: string;  // Optional profile picture URL
+  aboutMe?: string;     // Optional "About Me" description
 };
-
 
 type ThreadTag = {
   id: number;
   name: string;
-};
-
-type Thread = {
-  answerCommentId: number;
-  comments: ThreadComment[];
-  id: number;
-  title: string;
-  category: ThreadCategory;
-  creationDate: string;
-  description: string;
-  creator: User;
-  commentCount: number;
-  isLocked: boolean;  // New property to indicate if the thread is locked
-  tags: ThreadTag[];  // New property to include tags for the thread
-  isAnswered?: boolean;  // Optional property for QNA threads
-  commentAnswerId?: number;  // Optional: ID of the comment marked as the answer for QNA threads
-  isModerator: boolean;
-};
-
-
-
-type QNAThread = Thread & {
-  category: "QNA";
-  isAnswered: boolean;
-  commentAnswerId?: number;
-};
-
-type Advertisement = Thread & {
-  category: "AD";
-  link: string;
-};
-
-type AdvertisementClickthrough = {
-  advertisement: number;
-  user?: number;  // Optional: stores user info if logged in
 };
 
 type ThreadComment = {
@@ -56,30 +22,69 @@ type ThreadComment = {
   content: string;
   creator: User;
   creationDate: string;
-  parentCommentId?: number;  // Optional: stores ID of the parent comment for nested comments
+  parentCommentId?: number; // Optional for nested comments
+  replies?: ThreadComment[];  // Optional replies
 };
 
-// For managing tags in threads
+type Thread = {
+  answerCommentId: number;
+  comments: ThreadComment[];
+  id: number;
+  title: string;
+  category: ThreadCategory; // Should accept "AD"
+  creationDate: string;
+  description: string;
+  creator: User;
+  commentCount: number;
+  isLocked: boolean; // Indicates if the thread is locked
+  tags: ThreadTag[]; // Tags for the thread
+  isAnswered?: boolean; // Optional for QNA threads
+  commentAnswerId?: number; // ID of the answer for QNA threads
+  isModerator: boolean; // Indicates if the thread creator is a moderator
+};
+
+// Define properties for page components
+type ThreadDetailPageProps = {
+  params: {
+    id: string; // Dynamic route parameter
+  };
+};
+
+// Define types for QNA threads
+type QNAThread = Thread & {
+  category: "QNA";
+  isAnswered: boolean;
+  commentAnswerId?: number; // Optional: ID of the comment marked as the answer
+};
+
+// Additional props types
 type TagManagementProps = {
   thread: Thread;
 };
 
-// For thread lock control by moderators
 type ThreadLockControlProps = {
   thread: Thread;
 };
 
-// For marking comments as answers in QNA threads
 type MarkAsAnswerProps = {
   threadId: number;
   threadCreator: User;
   currentUser: User;
 };
 
-// For handling advertisement clicks
 type AdvertisementClickthroughProps = {
-  advertisementId: number;
-  userId?: number;  // Optional: stores user ID if logged in
+  advertisementId: number; // ID of the advertisement clicked
+  userId?: number; // Optional: User ID if logged in
+};
+
+type Advertisement = Thread & { // Extend Thread for Advertisement
+  category: "AD"; // Must be "AD"
+  link: string; // Link to the advertisement
+};
+
+type AdvertisementClickthrough = {
+  advertisement: number; // ID of the clicked advertisement
+  user?: number; // Optional user ID if logged in
 };
 
 

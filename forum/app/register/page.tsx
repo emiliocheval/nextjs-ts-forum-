@@ -54,7 +54,7 @@ const Register = ({ onRegister = () => {} }: Props) => {
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="card w-full md:w-1/3 bg-white shadow-xl rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
+        <h2 className="text-2xl font-bold text-center mb-4 text-black">Register</h2>
         <form onSubmit={handleRegister}>
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
@@ -63,7 +63,7 @@ const Register = ({ onRegister = () => {} }: Props) => {
             <input
               type="text"
               id="username"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-black"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none  text-black"
               placeholder="Username"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -77,7 +77,7 @@ const Register = ({ onRegister = () => {} }: Props) => {
             <input
               type="password"
               id="password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-black"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none  text-black"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -91,7 +91,7 @@ const Register = ({ onRegister = () => {} }: Props) => {
             <input
               type="password"
               id="confirm-password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-black"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none text-gray-700  text-black"
               placeholder="Repeat Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -101,7 +101,7 @@ const Register = ({ onRegister = () => {} }: Props) => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="inline-block mb-4 text-black bg-white py-2 px-4 rounded-lg hover:bg-[#c2c2c2] transition-colors"
             >
               Register
             </button>

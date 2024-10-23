@@ -1,30 +1,9 @@
 const THREADS_KEY = 'forum_threads';
 const COMMENTS_KEY = 'forum_comments';
-const USERS_KEY = 'users'; // Key to store users
-const CURRENT_USER_KEY = 'currentUser'; // Key to store currently logged-in user
+const USERS_KEY = 'users'; 
+const CURRENT_USER_KEY = 'currentUser'; 
+const ADS_KEY = 'forum_ads'; // Add this constant
 
-// Define Thread and ThreadComment interfaces
-interface Thread {
-  id: number;
-  title: string;
-  content: string;
-  isLocked?: boolean; // Optional property to lock threads
-}
-
-interface ThreadComment {
-  id: number;
-  thread: number; // Thread ID
-  content: string;
-}
-
-// Define User interface
-interface User {
-  userName: string;
-  password: string;
-  isModerator: boolean;
-  aboutMe?: string; // Optional property
-  profilePic?: string; // Optional property
-}
 
 // Retrieve threads from local storage
 export const getThreadsFromLocalStorage = (): Thread[] => {
@@ -38,10 +17,17 @@ export const getThreadsFromLocalStorage = (): Thread[] => {
 
     return parsedThreads.map(thread => {
       const commentCount = allComments.filter(comment => comment.thread === thread.id).length;
-      return { ...thread, commentCount }; // Add commentCount to each thread
+      return { ...thread, commentCount };
     });
   }
   return [];
+};
+
+// Save comments to local storage
+export const saveCommentsToLocalStorage = (comments: ThreadComment[]): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+  }
 };
 
 // Save threads to local storage
@@ -55,8 +41,8 @@ export const saveThreadsToLocalStorage = (threads: Thread[]): void => {
 export const getCommentsFromLocalStorage = (threadId: number): ThreadComment[] => {
   if (typeof window !== 'undefined') {
     const comments = localStorage.getItem(COMMENTS_KEY);
-    const allComments = comments ? JSON.parse(comments) : [];
-    return allComments.filter((comment: ThreadComment) => comment.thread === threadId);
+    const allComments: ThreadComment[] = comments ? JSON.parse(comments) : [];
+    return allComments.filter(comment => comment.thread === threadId);
   }
   return [];
 };
@@ -65,23 +51,23 @@ export const getCommentsFromLocalStorage = (threadId: number): ThreadComment[] =
 export const saveCommentToLocalStorage = (comment: ThreadComment): void => {
   if (typeof window !== 'undefined') {
     const comments = localStorage.getItem(COMMENTS_KEY);
-    const allComments = comments ? JSON.parse(comments) : [];
+    const allComments: ThreadComment[] = comments ? JSON.parse(comments) : [];
     allComments.push(comment);
-    
+    saveCommentsToLocalStorage(allComments);
+
     // Update comment count for each thread
     const threads = getThreadsFromLocalStorage();
     const updatedThreads = threads.map(thread => {
       if (thread.id === comment.thread) {
         return {
           ...thread,
-          commentCount: allComments.filter((c: { thread: number; }) => c.thread === thread.id).length
+          commentCount: allComments.filter(c => c.thread === thread.id).length
         };
       }
       return thread;
     });
-    
+
     saveThreadsToLocalStorage(updatedThreads);
-    localStorage.setItem(COMMENTS_KEY, JSON.stringify(allComments));
   }
 };
 
@@ -102,7 +88,7 @@ export const saveUsersToLocalStorage = (users: User[]): void => {
 };
 
 // Register a new user
-export const registerUser = (userName: string, password: string, aboutMe?: string, profilePic?: string) => {
+export const registerUser = (userName: string, password: string, aboutMe?: string, profilePic?: string): boolean => {
   const users = getUsersFromLocalStorage();
   
   if (users.some(user => user.userName === userName)) {
@@ -113,11 +99,11 @@ export const registerUser = (userName: string, password: string, aboutMe?: strin
     userName,
     password,
     isModerator: false,
-    aboutMe: aboutMe || "", // Set default to empty string if undefined
-    profilePic: profilePic || "" // Set default to empty string if undefined
+    aboutMe: aboutMe || "", 
+    profilePic: profilePic || "" 
   });
   saveUsersToLocalStorage(users);
-  return true; // Registration successful
+  return true; 
 };
 
 // Login user
@@ -127,9 +113,9 @@ export const loginUser = (userName: string, password: string): boolean => {
 
   if (user) {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    return true; // Login successful
+    return true; 
   }
-  return false; // Invalid credentials
+  return false; 
 };
 
 // Get the currently logged-in user
@@ -137,23 +123,18 @@ export const getCurrentUserFromLocalStorage = (): User | null => {
   if (typeof window !== 'undefined') {
     const user = localStorage.getItem(CURRENT_USER_KEY);
     if (user) {
-      const parsedUser = JSON.parse(user);
+      const parsedUser: User = JSON.parse(user);
       return {
         userName: parsedUser.userName,
         password: parsedUser.password,
         isModerator: parsedUser.isModerator,
-        aboutMe: parsedUser.aboutMe || "", // Fallback to empty string
-        profilePic: parsedUser.profilePic || "", // Fallback to empty string
-      } as User; // Cast as User to ensure the type matches
+        aboutMe: parsedUser.aboutMe || "", 
+        profilePic: parsedUser.profilePic || "", 
+      };
     }
   }
-  return null; // Return null if no user is found
+  return null; 
 };
-
-
-
-
-
 
 // Clear the current user from local storage
 export const clearCurrentUserFromLocalStorage = (): void => {
@@ -202,27 +183,55 @@ export const unlockThread = (threadId: number): void => {
 // Promote user to moderator
 export const promoteToModerator = (userName: string): boolean => {
   const users = getUsersFromLocalStorage();
-  const user = users.find((u: { userName: string }) => u.userName === userName);
+  const user = users.find((u: User) => u.userName === userName);
 
   if (user) {
-    user.isModerator = true; // Promote to moderator
-    saveUsersToLocalStorage(users); // Save updated users back to localStorage
-    return true; // Successfully promoted
+    user.isModerator = true; 
+    saveUsersToLocalStorage(users); 
+    return true; 
   }
 
-  return false; // User not found
+  return false; 
 };
 
 // Demote user from moderator
 export const demoteFromModerator = (userName: string): boolean => {
   const users = getUsersFromLocalStorage();
-  const user = users.find((u: { userName: string }) => u.userName === userName);
+  const user = users.find((u: User) => u.userName === userName);
 
   if (user) {
-    user.isModerator = false; // Demote from moderator
-    saveUsersToLocalStorage(users); // Save updated users back to localStorage
-    return true; // Successfully demoted
+    user.isModerator = false; 
+    saveUsersToLocalStorage(users); 
+    return true; 
   }
 
-  return false; // User not found
+  return false; 
 };
+
+// Retrieve advertisements from local storage
+// In your localStorage.ts file
+export const getAdsFromLocalStorage = (): Advertisement[] => {
+  if (typeof window !== 'undefined') {
+    const ads = localStorage.getItem(ADS_KEY);
+    return ads ? JSON.parse(ads) : [];
+  }
+  return [];
+};
+
+
+// Save advertisements to local storage
+export const saveAdsToLocalStorage = (ads: Advertisement[]): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(ADS_KEY, JSON.stringify(ads));
+  }
+};
+
+// Example of how to add a new ad
+export const addAdToLocalStorage = (ad: Advertisement): void => {
+  if (typeof window !== 'undefined') {
+    const ads = getAdsFromLocalStorage();
+    ads.push(ad);
+    saveAdsToLocalStorage(ads);
+  }
+};
+

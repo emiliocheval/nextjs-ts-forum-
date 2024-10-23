@@ -4,7 +4,6 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { FaRegCommentAlt, FaLock, FaUnlock, FaCheckCircle } from "react-icons/fa";
 
-// Define the type for thread
 interface Thread {
   id: number;
   category: string;
@@ -12,9 +11,9 @@ interface Thread {
   creationDate: string;
   title: string;
   description: string;
-  commentCount: number;
+  commentCount: number; // Ensure this is included
   isLocked: boolean;
-  isAnswered?: boolean; // Optional, since not all threads might have this field
+  isAnswered?: boolean; // Optional
 }
 
 interface ThreadCardProps {
@@ -44,16 +43,16 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
         <div className="flex items-center text-xs text-gray-500 mt-2">
           <div className="flex items-center justify-center bg-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-400 transition-colors">
             <FaRegCommentAlt className="text-lg mr-1.5 text-gray-700" />
-            <span className="text-sm font-semibold text-gray-700">{thread.commentCount}</span>
+            <span className="text-sm font-semibold text-gray-700">{thread.commentCount}</span> {/* Display comment count */}
           </div>
         </div>
 
         {/* Lock status display */}
         <div className="absolute top-2 right-2 flex items-center">
           {thread.isLocked ? (
-            <FaLock className="text-red-500 text-lg" title="Locked" />
+            <FaLock className="text-black text-lg" title="Locked" />
           ) : (
-            <FaUnlock className="text-green-500 text-lg" title="Unlocked" />
+            <FaUnlock className="text-black text-lg" title="Unlocked" />
           )}
         </div>
 

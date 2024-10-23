@@ -3,14 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import CommentsSection from "../../components/commentsSection";
-import { getThreadsFromLocalStorage, getCurrentUser, saveThreadsToLocalStorage } from "../../utils/localStorage";
+import {
+  getThreadsFromLocalStorage,
+  getCurrentUserFromLocalStorage,
+  saveThreadsToLocalStorage,
+} from "../../utils/localStorage";
 import { FaCheckCircle, FaLock, FaUnlock } from "react-icons/fa";
-
-type ThreadDetailPageProps = {
-  params: {
-    id: string; // Dynamic route parameter
-  };
-};
 
 const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
   const { id } = params;
@@ -32,7 +30,7 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
       setIsLocked(selectedThread.isLocked);
     }
 
-    const user = getCurrentUser();
+    const user = getCurrentUserFromLocalStorage();
     if (user && isUser(user)) {
       setCurrentUser(user);
       setIsModerator(user.isModerator);
@@ -40,7 +38,7 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
       setCurrentUser(null);
       setIsModerator(false);
     }
-  }, [id]);
+  }, [id, threadId]);
 
   const handleLockStatusChange = (locked: boolean) => {
     if (thread) {
@@ -50,7 +48,9 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
 
       // Update in localStorage
       const threads = getThreadsFromLocalStorage();
-      const updatedThreads = threads.map(t => t.id === threadId ? updatedThread : t);
+      const updatedThreads = threads.map((t) =>
+        t.id === threadId ? updatedThread : t
+      );
       saveThreadsToLocalStorage(updatedThreads);
     }
   };
@@ -60,13 +60,15 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
       const updatedThread = {
         ...thread,
         isAnswered: markAsAnswer,
-        commentAnswerId: markAsAnswer ? commentId : undefined
+        commentAnswerId: markAsAnswer ? commentId : undefined,
       };
       setThread(updatedThread);
 
       // Update in localStorage
       const threads = getThreadsFromLocalStorage();
-      const updatedThreads = threads.map(t => t.id === threadId ? updatedThread : t);
+      const updatedThreads = threads.map((t) =>
+        t.id === threadId ? updatedThread : t
+      );
       saveThreadsToLocalStorage(updatedThreads);
     }
   };
@@ -80,19 +82,21 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
         creator: currentUser,
         thread: thread.id,
         isAnswered: false, // Default to false
-        parentCommentId: undefined // Adjust if nested comments are supported
+        parentCommentId: undefined, // Adjust if nested comments are supported
       };
-  
+
       const updatedThread = {
         ...thread,
         comments: [...thread.comments, newComment],
-        commentCount: (thread.commentCount || 0) + 1 // Update comment count
+        commentCount: (thread.commentCount || 0) + 1, // Update comment count
       };
       setThread(updatedThread);
-  
+
       // Update in localStorage
       const threads = getThreadsFromLocalStorage();
-      const updatedThreads = threads.map(t => t.id === threadId ? updatedThread : t);
+      const updatedThreads = threads.map((t) =>
+        t.id === threadId ? updatedThread : t
+      );
       saveThreadsToLocalStorage(updatedThreads);
     }
   };
@@ -106,7 +110,9 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
       <div className="max-w-3xl w-full">
         {/* Thread Details Card */}
         <div className="relative bg-white border rounded-lg p-6 shadow-lg mb-6">
-          <h1 className="text-lg font-semibold text-gray-800 transition-colors">{thread.title}</h1>
+          <h1 className="text-lg font-semibold text-gray-800 transition-colors">
+            {thread.title}
+          </h1>
           <div className="flex items-center text-xs text-gray-500 mb-2">
             <span className="ml">u/{thread.creator.userName}</span>
             <span className="mx-1">•</span>
@@ -124,8 +130,8 @@ const ThreadDetailPage: React.FC<ThreadDetailPageProps> = ({ params }) => {
           {/* Lock/Unlock Button */}
           {isModerator && (
             <div className="absolute bottom-2 right-2">
-              <button 
-                onClick={() => handleLockStatusChange(!isLocked)} 
+              <button
+                onClick={() => handleLockStatusChange(!isLocked)}
                 className="text-black text-xl p-2"
                 title={isLocked ? "Unlock Thread" : "Lock Thread"}
               >

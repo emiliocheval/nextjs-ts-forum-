@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FiSearch, FiUser } from 'react-icons/fi'; // Import the user icon
-import Image from "next/image";
-import { getCurrentUser, clearCurrentUser } from "../utils/localStorage"; // Make sure to import these functions
+import { FiSearch, FiUser } from 'react-icons/fi';
+import { getCurrentUser, clearCurrentUser, getThreadsFromLocalStorage } from "../utils/localStorage"; // Ensure this import includes the threads
 
 // Define the props interface
 interface HeaderProps {
-  isDarkMode: boolean; // Add the isDarkMode prop
+  isDarkMode: boolean;
+  onSearch: (filteredThreads: Thread[]) => void; // Add onSearch prop to handle search results
 }
 
-const Header = ({ isDarkMode }: HeaderProps) => { // Use the props interface
+const Header = ({ isDarkMode, onSearch }: HeaderProps) => {
   const [user, setUser] = useState<{ userName: string; isModerator: boolean } | null>(null);
+  const [searchInput, setSearchInput] = useState(""); // State for the search input
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -25,10 +26,26 @@ const Header = ({ isDarkMode }: HeaderProps) => { // Use the props interface
     window.location.href = '/'; // Redirect to home page after sign out
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchInput(query);
+
+    // Fetch all threads from local storage
+    const threads = getThreadsFromLocalStorage();
+
+    // Filter threads based on tags
+    const filteredThreads = threads.filter(thread =>
+      thread.tags.some(tag => tag.name.toLowerCase().includes(query))
+    );
+
+    // Pass filtered threads to the parent component
+    onSearch(filteredThreads);
+  };
+
   return (
     <header
       className="px-4 py-4 flex justify-between items-center w-full"
-      style={{ boxShadow: '0px 1px 0px rgba(229, 231, 235, 0.5)' }} // Simulating a 0.5px border with shadow
+      style={{ boxShadow: '0px 1px 0px rgba(229, 231, 235, 0.5)' }}
     >
       <div className="flex-1">
         <Link href="/">
@@ -37,28 +54,17 @@ const Header = ({ isDarkMode }: HeaderProps) => { // Use the props interface
           </div>
         </Link>
       </div>
-      <div className="flex-1 text-center">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search" 
-            className={`border rounded-full pl-10 pr-3 py-2 w-full text-sm ${isDarkMode ? 'text-black bg-white' : 'text-white bg-gray-800'}`}
-          />
-        </div>
-      </div>
+      
       <div className="flex-1 text-right">
         {user ? (
           <>
-            {/* User icon linked to admin page for admins */}
             {user.isModerator ? (
               <Link href="/admin">
-                <FiUser className={`h-6 w-6 inline-block mr-4 ${isDarkMode ? 'text-white' : 'text-black'}`} /> {/* Admin icon */}
+                <FiUser className={`h-6 w-6 inline-block mr-4 ${isDarkMode ? 'text-white' : 'text-black'}`} />
               </Link>
             ) : (
-              // User icon linked to profile page for non-admin users
               <Link href="/profile">
-                <FiUser className={`h-6 w-6 inline-block mr-4 ${isDarkMode ? 'text-white' : 'text-black'}`} /> {/* Regular user icon */}
+                <FiUser className={`h-6 w-6 inline-block mr-4 ${isDarkMode ? 'text-white' : 'text-black'}`} />
               </Link>
             )}
             <button
